@@ -34,7 +34,7 @@
 
 - name: replace the file default at /etc/nginx/sites-available
   copy:
-      src: ./default
+      src: ~/LEMP_ANSIBLE
       dest: /etc/nginx/sites-available/.
       force: yes
       owner: root
