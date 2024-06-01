@@ -1,0 +1,43 @@
+---
+# tasks file for mysql
+
+- name: update packages
+  apt: 
+   update_cache: yes
+
+# Update mysql root password for all root accounts  
+
+- name: Update root user password
+  #become_user: root
+  mysql_user:
+     name: root
+     host: "{{ lookup('file', '/home/ubuntu/ansible/myhosts') }}"
+     password: "{{ wp_mysql_password }}"
+     priv: "*.*:ALL,GRANT"
+
+#Set Mysql_user and Password for the Mysql_User
+
+- name: Create mysql user
+  mysql_user:
+    name: "{{ wp_mysql_user }}"
+    password: "{{ wp_mysql_password }}"
+    priv: "*.*:ALL"
+
+#Create DataBase for the Mysql_user 
+
+- name: Create mysql database
+  mysql_db:
+    name: "{{ wp_mysql_db }}"
+    state: present
+
+# Ensure anonymous users are not in the database and Remove the test DB
+
+- name: Delete anonymous MySQL server user for localhost
+  action: mysql_user user=" " state="absent"
+
+- name: Remove the MySQL test database
+  action: mysql_db db=test state=absent
+
+
+
+

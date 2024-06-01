@@ -1,0 +1,107 @@
+---
+# tasks file for wordpress
+- name: download wordpress
+  get_url:
+      url=https://wordpress.org/latest.tar.gz
+      dest=/tmp/latest.tar.gz
+      validate_certs=no
+
+- name: Unzip Wordpress tar file
+  ansible.buitin.unarchive: 
+        src: /tmp/latest.tar.gz 
+        dest: ~
+#        remote_src: yes
+
+#- name: copy wp-config file to /var/www/html/
+#  copy:
+#    src: ./wp-config
+#    dest: /var/www/html/
+
+# Move all files from Word_press
+
+- name: moving all files from wordpress to html
+  copy:
+    src: ~/wordpress/*
+    dest: /var/www/html/.
+
+- name: Set ownership to root
+  ansible.builtin.file:
+        path: /var/www/html/*
+        owner: www-data
+        group: www-data
+# Delete the index.nginx-debian.html
+- name: Move index.html and index.nginx-debian.html files
+  ansible.builtin.command:
+    cmd: mv /var/www/html/index.html /var/www/html/index.nginx-debian.html ~/.
+
+#- name: Deleting the index.nginx-debian.html
+#  ansible.builtin.file:
+#    path: /var/www/html/index.nginx-debian.html
+#    state: absent
+
+# Copy wp-config file to /var/www/html/
+
+#- name: copy wp-config file to /var/www/html/
+#  copy:
+#    src: ./wp-config
+#    dest: /var/www/html/
+
+#- name: Set ownership to www-data:www-data
+#  ansible.builtin.file:
+#        path: /var/www/html
+#        owner: www-data
+#        group: www-data
+
+#- name: Restarted  Nginx service
+#  service:
+#        name: nginx
+#        state: restarted
+
+#- name: Set ownership for files in /var/www/html
+#  ansible.builtin.find:
+#    paths: /var/www/html/
+#    recurse: yes
+#    file_type: file
+#  register: found_files
+
+# tasks file for setting ownership
+
+#- name: Set ownership to www-data:www-data
+#  ansible.builtin.file:
+#    path: "{{ item.path }}"
+#    owner: www-data
+#    group: www-data
+#  with_items: "{{ found_files.files }}"
+
+
+#- name: update default conf nginx site
+#  lineinfile:
+#      dest: /etc/nginx/sites-enabled/default
+#      regexp: "^\\s*root /var/www/html;$"
+#      line: "root /var/www/wordpress"
+#      insertafter: "^\\s*root /var/www/html;$"
+#      backrefs: yes
+#- name: update default conf nginx site
+#  lineinfile:
+#      dest: /etc/nginx/sites-enabled/default
+#      regexp: "^\\s*index index.html index.htm index.nginx-debian.html;$"
+#      line: "index index.php index.html index.htm index.nginx-debian.html;"
+#      insertafter: "^\\s*index index.html index.htm index.nginx-debian.html;$"
+#      backrefs: yes
+#- name: rename the smaple config file
+#  ansible.builtin.file:  
+#      src: /var/www/wordpress/wp-config-sample.php
+#      dest: /var/www/wordpress/wp-config.php
+#      state: hard 
+
+#- name: update wordpress config file
+#  lineinfile:
+#       dest: /var/www/wordpress/wp-config.php
+#       regexp: "{{item.line}}"
+#       line: "{{ item.line }}"
+#  with_items:
+#       - {'regex': "define\\('DB_NAME', '(.)+'\\);", 'line': "define('Db_name', '{{wp_mysql_db}}');"}
+#       - {'regex': "define\\('DB_USER', '(.)+'\\);", 'line': "define('Db_USER', '{{wp_mysql_user}}');"}
+#       - {'regex': "define\\('DB_PASSWORD', '(.)+'\\);", 'line': "define('DB_PASSWORD', '{{wp_mysql_password}}');"}
+
+
